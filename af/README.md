@@ -1,6 +1,6 @@
 # AfDesign (old branch v0.0.x)
 ### Google Colab
-<a href="https://colab.research.google.com/github/sokrypton/ColabDesign/blob/main/af/design.ipynb">
+<a href="https://colab.research.google.com/github/sokrypton/ColabDesign/blob/v0/af/design.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
