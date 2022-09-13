@@ -11,8 +11,35 @@ from colabdesign.af.alphafold.common import confidence_jax, residue_constants
 # AF_LOSS - setup loss function
 ####################################################
 
+
 class _af_loss:
   # protocol specific loss functions
+
+  #TODO complete loss function
+  def _loss_hetero(self, inputs, outputs, opt, aux):
+    # \
+    #  \-> Calc AA binding 
+    #  |\-> Calc BB binding 
+    #  ||
+    #  ~~> Calc loss from homodimere binding
+    #    \
+    #     \-> Calc AB binding
+    #     |
+    #     ~~> Calc loss from heterodimere binding
+    #      \
+    #       \-> _loss_unsupervised
+    #
+    # ==> Calc overall loss
+    A,B = inputs
+    _outputs = outputs
+    copies = 1
+    '''AA binding'''
+    alnAA = get_rmsd_loss(A, A, copies=copies)
+    '''BB binding'''
+    alnAA = get_rmsd_loss(A, A, copies=copies)
+    '''AB binding'''
+
+
   def _loss_fixbb(self, inputs, outputs, opt, aux):
     '''get losses'''
     copies = self._args["copies"] if self._args["homooligomer"] else 1    
