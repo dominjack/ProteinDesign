@@ -54,8 +54,8 @@ class _af_prep:
     self._copies = copies
     self._rog = rog
 
-    self._default_weights.update({'con':2.0, 'rog':1.0, 'bh':0.0})
-    self._default_weights.update({'i_pae':0.01, 'i_con':0.1})
+    self.opt["weights"].update({'con':2.0, 'rog':1.0, 'bh':0.0})
+    self.opt["weights"].update({'i_pae':0.01, 'i_con':0.1})
 
     ind = np.zeros(self._len)
     ind[:self._len1] = np.arrange(self._len1)
