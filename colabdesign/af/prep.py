@@ -58,11 +58,11 @@ class _af_prep:
     self.opt["weights"].update({'i_pae':0.01, 'i_con':0.1})
 
     ind = np.zeros(self._len)
-    ind[:self._len1] = np.arrange(self._len1)
-    ind[self._len1:] = np.arrange(self._len2) + 50 + self._len1
+    ind[:self._len1] = np.arange(int(self._len1))
+    ind[self._len1:] = np.arange(int(self._len2)) + 50 + self._len1
 
-    ind1 = np.arrange(self._len1)
-    ind2 = np.arrange(self._len2)
+    ind1 = np.arange(self._len1)
+    ind2 = np.arange(self._len2)
 
     self._inputs['residue_index'] = ind.astype(int)[None]
     self._inputs1['residue_index'] = ind1.astype(int)[None]
