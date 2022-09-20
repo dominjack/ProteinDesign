@@ -36,8 +36,12 @@ class _af_loss:
     '''AA binding'''
     alnAA = get_rmsd_loss(A, A, copies=copies)
     '''BB binding'''
-    alnAA = get_rmsd_loss(A, A, copies=copies)
+    alnAA = get_rmsd_loss(B, B, copies=copies)
     '''AB binding'''
+
+    self._loss_unsupervised(A, outputs, opt, aux)
+    self._loss_unsupervised(B, outputs, opt, aux)
+
 
 
   def _loss_fixbb(self, inputs, outputs, opt, aux):

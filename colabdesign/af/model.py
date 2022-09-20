@@ -31,7 +31,7 @@ class mk_af_model(design_model, _af_inputs, _af_loss, _af_prep, _af_design, _af_
                use_crop=False, crop_len=None, crop_mode="slide",
                debug=False, loss_callback=None, data_dir="."):
     
-    assert protocol in ["fixbb","hallucination","binder","partial"] #TODO add protocol
+    assert protocol in ["fixbb","hallucination","binder","partial","hetero"] #Added hetero protocol
     assert recycle_mode in ["average","first","last","sample","add_prev","backprop"]
     assert crop_mode in ["slide","roll","pair","dist"]
     
@@ -40,7 +40,7 @@ class mk_af_model(design_model, _af_inputs, _af_loss, _af_prep, _af_design, _af_
 
     self.protocol = protocol
     self._loss_callback = loss_callback
-    self._num = num_seq_get
+    self._num = num_seq
     self._args = {"use_templates":use_templates, "use_multimer":use_multimer,
                   "recycle_mode":recycle_mode, "use_mlm": use_mlm,
                   "debug":debug,
@@ -105,11 +105,13 @@ class mk_af_model(design_model, _af_inputs, _af_loss, _af_prep, _af_design, _af_
     #####################################
     # set protocol specific functions
     #####################################
-    idx = ["fixbb","hallucination","binder","partial"].index(self.protocol) #TODO add protocol
-    self.prep_inputs = [self._prep_fixbb, self._prep_hallucination, self._prep_binder, self._prep_partial][idx]#TODO (add preperation)
-    self._get_loss   = [self._loss_fixbb, self._loss_hallucination, self._loss_binder, self._loss_partial][idx]#TODO add loss function
+    idx = ["fixbb","hallucination","binder","partial","hetero"].index(self.protocol) #Added hetero protocol
+    self.prep_inputs = [self._prep_fixbb, self._prep_hallucination, self._prep_binder, self._prep_partial, self._prep_hetero][idx]#TODO (add preperation)
+    self._get_loss   = [self._loss_fixbb, self._loss_hallucination, self._loss_binder, self._loss_partial, self._loss_hallucination][idx]#Added hetero loss
 
-  def _get_model(self, cfg, callback=None):
+  def _get_model(self, cfg, callback=None): 
+    """generally only gets called once, whenever no model is configured,
+    returns jit compiled representation of _model()."""
 
     a = self._args
     runner = model.RunModel(cfg, is_training=True,
@@ -163,6 +165,8 @@ class mk_af_model(design_model, _af_inputs, _af_loss, _af_prep, _af_design, _af_
       #######################################################################
 
       outputs = runner.apply(model_params, key(), inputs)
+      
+
 
       # add aux outputs
       aux.update({"atom_positions":outputs["structure_module"]["final_atom_positions"],

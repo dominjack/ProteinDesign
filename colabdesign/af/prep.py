@@ -25,7 +25,8 @@ idx_to_resname = dict((v,k) for k,v in resname_to_idx.items())
 #################################################
 class _af_prep:
 
-  def _prep_model(self, **kwargs):
+  def _prep_model(self, **kwargs): 
+    """called from every standard protocol to config a model"""
     '''prep model'''
     if not hasattr(self,"_model") or self._cfg != self._model["runner"].config:
       self._cfg.model.global_config.subbatch_size = None
@@ -41,6 +42,33 @@ class _af_prep:
     '''process features'''
     if num_seq is None: num_seq = self._num
     return prep_input_features(L=num_res, N=num_seq, T=num_templates)
+
+  def _prep_hetero(self, length_1=100, length_2=100, copies=10, rog=20, **kwargs):
+    """Added to halucinate heterodimers"""
+    self._len = length_1 + length_2
+    self._len1 = length_1
+    self._len2 = length_2
+    self._inputs = self._prep_features(self._len)
+    self._inputs1 = self._prep_features(self._len1)
+    self._inputs2 = self._prep_features(self._len2)
+    self._copies = copies
+    self._rog = rog
+
+    self._default_weights.update({'con':2.0, 'rog':1.0, 'bh':0.0})
+    self._default_weights.update({'i_pae':0.01, 'i_con':0.1})
+
+    ind = np.zeros(self._len)
+    ind[:self._len1] = np.arrange(self._len1)
+    ind[self._len1:] = np.arrange(self._len2) + 50 + self._len1
+
+    ind1 = np.arrange(self._len1)
+    ind2 = np.arrange(self._len2)
+
+    self._inputs['residue_index'] = ind.astype(int)[None]
+    self._inputs1['residue_index'] = ind1.astype(int)[None]
+    self._inputs2['residue_index'] = ind2.astype(int)[None]
+
+
 
   def _prep_fixbb(self, pdb_filename, chain=None,
                   copies=1, repeat=False, homooligomer=False,
