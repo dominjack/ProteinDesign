@@ -68,6 +68,8 @@ class _af_prep:
     self._inputs1['residue_index'] = ind1.astype(int)[None]
     self._inputs2['residue_index'] = ind2.astype(int)[None]
 
+    self._prep_model(**kwargs)
+
 
 
   def _prep_fixbb(self, pdb_filename, chain=None,
