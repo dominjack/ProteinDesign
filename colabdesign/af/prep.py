@@ -46,6 +46,7 @@ class _af_prep:
   def _prep_hetero(self, length_1=100, length_2=100, copies=10, rog=20, **kwargs):
     """Added to halucinate heterodimers"""
     self._len = length_1 + length_2
+    self._lengths = [self._len]
     self._len1 = length_1
     self._len2 = length_2
     self._inputs = self._prep_features(self._len)
