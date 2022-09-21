@@ -1,4 +1,6 @@
 import os
+
+from itsdangerous import NoneAlgorithm
 import jax
 import jax.numpy as jnp
 import numpy as np
@@ -20,6 +22,7 @@ from colabdesign.af.crop   import _af_crop, crop_feat
 ################################################################
 
 class mk_af_model(design_model, _af_inputs, _af_loss, _af_prep, _af_design, _af_utils, _af_crop):
+  __binder = None #Added __binder for halucination pong
   def __init__(self, protocol="fixbb", num_seq=1,
                num_models=1, sample_models=True,
                recycle_mode="last", num_recycles=0,
@@ -31,7 +34,7 @@ class mk_af_model(design_model, _af_inputs, _af_loss, _af_prep, _af_design, _af_
                use_crop=False, crop_len=None, crop_mode="slide",
                debug=False, loss_callback=None, data_dir="."):
     
-    assert protocol in ["fixbb","hallucination","binder","partial","hetero"] #Added hetero protocol
+    assert protocol in ["fixbb","hallucination","binder","partial","hetero","hetero_pong"] #Added hetero protocol
     assert recycle_mode in ["average","first","last","sample","add_prev","backprop"]
     assert crop_mode in ["slide","roll","pair","dist"]
     
@@ -105,9 +108,9 @@ class mk_af_model(design_model, _af_inputs, _af_loss, _af_prep, _af_design, _af_
     #####################################
     # set protocol specific functions
     #####################################
-    idx = ["fixbb","hallucination","binder","partial","hetero"].index(self.protocol) #Added hetero protocol
-    self.prep_inputs = [self._prep_fixbb, self._prep_hallucination, self._prep_binder, self._prep_partial, self._prep_hetero][idx]#TODO (add preperation)
-    self._get_loss   = [self._loss_fixbb, self._loss_hallucination, self._loss_binder, self._loss_partial, self._loss_hallucination][idx]#Added hetero loss
+    idx = ["fixbb","hallucination","binder","partial","hetero", "hetero_pong"].index(self.protocol) #Added hetero/hetero_pong protocol
+    self.prep_inputs = [self._prep_fixbb, self._prep_hallucination, self._prep_binder, self._prep_partial, self._prep_hetero][idx]#TODO (add pong preperation)
+    self._get_loss   = [self._loss_fixbb, self._loss_hallucination, self._loss_binder, self._loss_partial, self._loss_hallucination, self._loss_hetero_pong][idx]#Added hetero/hetero_pong loss
 
   def _get_model(self, cfg, callback=None): 
     """generally only gets called once, whenever no model is configured,

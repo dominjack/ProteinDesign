@@ -70,7 +70,35 @@ class _af_prep:
     self._inputs2['residue_index'] = ind2.astype(int)[None]
 
     self._prep_model(**kwargs)
+    
+    
+  def _prep_hetero_pong(self, length_1=100, length_2=100, copies=10, rog=20, **kwargs):
+    """Added to halucinate heterodimers"""
+    self._len = length_1 + length_2
+    self._lengths = [self._len]
+    self._len1 = length_1
+    self._len2 = length_2
+    self._inputs = self._prep_features(self._len)
+    self._inputs1 = self._prep_features(self._len1)
+    self._inputs2 = self._prep_features(self._len2)
+    self._copies = copies
+    self._rog = rog
 
+    self.opt["weights"].update({'con':2.0, 'rog':1.0, 'bh':0.0})
+    self.opt["weights"].update({'i_pae':0.01, 'i_con':0.1})
+
+    ind = np.zeros(self._len)
+    ind[:self._len1] = np.arange(int(self._len1))
+    ind[self._len1:] = np.arange(int(self._len2)) + 50 + self._len1
+
+    ind1 = np.arange(self._len1)
+    ind2 = np.arange(self._len2)
+
+    self._inputs['residue_index'] = ind.astype(int)[None]
+    self._inputs1['residue_index'] = ind1.astype(int)[None]
+    self._inputs2['residue_index'] = ind2.astype(int)[None]
+
+    self._prep_model(**kwargs)
 
 
   def _prep_fixbb(self, pdb_filename, chain=None,

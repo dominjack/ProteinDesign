@@ -16,32 +16,36 @@ class _af_loss:
   # protocol specific loss functions
 
   #TODO complete loss function
-  def _loss_hetero(self, inputs, outputs, opt, aux):
+  def _loss_hetero_pong(self, inputs, outputs, opt, aux):
+    if self.__binder == None: # type: ignore
+      """
+        1. The hlucination loss has to be considerd as the single Protein loss.
+        2. The self binding of the Protein has to be calculated.
+      """
+      pass
+    else:
+      """
+        1. The binder loss has to be taken with __binder as the binder instead of a fixed binder from pdb.
+        2. The self binding of the Protein has to be calculated.
+      """
+      pass
+    
+    """
+      ==> The __binder has to be updated to the currently halucinated Protein.
+    """
+      
     # \
-    #  \-> Calc AA binding 
-    #  |\-> Calc BB binding 
-    #  ||
+    #  \-> Calc self binding 
+    #  |
     #  ~~> Calc loss from homodimere binding
     #    \
-    #     \-> Calc AB binding
+    #     \-> Calc self/__binder binding
     #     |
     #     ~~> Calc loss from heterodimere binding
     #      \
     #       \-> _loss_unsupervised
     #
     # ==> Calc overall loss
-    A,B = inputs
-    _outputs = outputs
-    copies = 1
-    '''AA binding'''
-    alnAA = get_rmsd_loss(A, A, copies=copies)
-    '''BB binding'''
-    alnAA = get_rmsd_loss(B, B, copies=copies)
-    '''AB binding'''
-
-    self._loss_unsupervised(A, outputs, opt, aux)
-    self._loss_unsupervised(B, outputs, opt, aux)
-
 
 
   def _loss_fixbb(self, inputs, outputs, opt, aux):
